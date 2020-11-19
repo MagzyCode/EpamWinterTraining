@@ -1,11 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace EpamWinterTraining.ProductsCollection
 {
     public class Bakery<T> where T : Products.IProduct
     {
-        public List<T> Products { get; set; }
+        private T[] _products;
+
+        public Bakery(T[] products)
+        {
+            Products = products;
+        }
+        public T[] Products
+        {
+            get
+            {
+                return (_products.Clone() as T[]);
+            }
+            private set
+            {
+                _products = value ?? throw new NullReferenceException("List of products can't be null");
+            }
+        }
     }
 }

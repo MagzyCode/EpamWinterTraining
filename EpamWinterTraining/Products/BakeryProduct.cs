@@ -1,14 +1,16 @@
 ﻿using EpamWinterTraining.Products.ProductComponents;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace EpamWinterTraining.Products
 {
-    public abstract class BakeryProduct : IProduct
+    public class BakeryProduct : IProduct, IComparable<BakeryProduct>
     {
         private int _markup;
         private string _title;
+        private List<Ingredient> _ingredients = new List<Ingredient>();
 
         public BakeryProduct(List<Ingredient> products, int markup, string title)
         {
@@ -48,7 +50,14 @@ namespace EpamWinterTraining.Products
                 _markup = value > 0 ? value : 0;
             }
         }
-        public List<Ingredient> Ingredients { get; set; } = new List<Ingredient>();
+        public List<Ingredient> Ingredients
+        {
+            get
+            {
+                return _ingredients;
+            }
+            set => _ingredients = value ?? throw new NullReferenceException("List of ingredients can't be null");
+        }
         public int IngredientAmount
         {
             get
@@ -64,7 +73,7 @@ namespace EpamWinterTraining.Products
         }
         public int GetProductPrice()
         {
-            var result = Ingredients.Select(i => i.Price).Sum();
+            var result = Ingredients.Select(i => i.Price).Sum() * (Markup + 100) / 100;
             return result;
         }
         public int GetProductWeight()
@@ -85,7 +94,18 @@ namespace EpamWinterTraining.Products
 
         public override string ToString()
         {
-            return base.ToString();
+            return "BakeryProduct{ Title: " + Title + ";" +
+                "Markup: " + Markup + ";" +
+                "Ingredients: { " + string.Join(' ', Ingredients) + "}}";
+            //"Product calorific: " + GetProductCalorific() + ";" +
+            //"Product price: " + GetProductPrice() + ";" +
+            //"Product weight: " + GetProductWeight() + "; " +
+
+        }
+
+        public int CompareTo(BakeryProduct other)
+        {
+            return GetProductCalorific().CompareTo(other.GetProductCalorific());
         }
 
         public static bool operator ==(BakeryProduct left, BakeryProduct right)

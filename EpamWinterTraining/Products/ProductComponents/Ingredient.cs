@@ -19,13 +19,14 @@ namespace EpamWinterTraining.Products.ProductComponents
 
         public const int STANDART_GRAMMING = 100;
 
-        public Ingredient(int calorific, int price)
+        public Ingredient(string title, int calorific, int price)
         {
+            Title = title;
             Calorific = calorific;
             Price = price;
         }
 
-        public Ingredient(int calorific, int price, int weight) : this(calorific, price)
+        public Ingredient(string title, int calorific, int price, int weight) : this(title, calorific, price)
         {
             Weight = weight;
         }
@@ -87,6 +88,14 @@ namespace EpamWinterTraining.Products.ProductComponents
         {
             var productPrice = Weight / STANDART_GRAMMING * Price;
             return productPrice;
+        }
+
+        public override string ToString()
+        {
+            return "Ingredient{ Title : " + Title + ";" + 
+                " Product calorific : " + GetProductCalorific() + ";" +
+                " Product price : " + GetProductPrice() + ";" +
+                " Product weight : " + Weight + "}";
         }
 
 
