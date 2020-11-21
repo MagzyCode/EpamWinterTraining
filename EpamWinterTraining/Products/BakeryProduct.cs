@@ -12,13 +12,19 @@ namespace EpamWinterTraining.Products
         private string _title;
         private List<Ingredient> _ingredients = new List<Ingredient>();
 
-        public BakeryProduct(List<Ingredient> products, int markup, string title)
+        public BakeryProduct(List<Ingredient> products, string title, CategoricalMarkup markup)
         {
             Ingredients = products;
-            Markup = markup;
+            Markup = (int)markup;
             Title = title;
         }
 
+        public BakeryProduct(List<Ingredient> products, int markup, string title)
+        {
+            Ingredients = products;
+            Markup = (int)markup;
+            Title = title;
+        }
 
         public string Title
         {
@@ -47,7 +53,7 @@ namespace EpamWinterTraining.Products
             }
             set
             {
-                _markup = value > 0 ? value : 0;
+                _markup = value > 100 ? value : 100;
             }
         }
         public List<Ingredient> Ingredients
@@ -65,20 +71,21 @@ namespace EpamWinterTraining.Products
                 return Ingredients.Count;
             }
         }
+        public int ProductCount { get; } = 1;
 
         public int GetProductCalorific()
         {
-            var result = Ingredients.Select(i => i.Calorific).Sum();
+            var result = Ingredients.Select(i => i.Calorific).Sum() * ProductCount;
             return result;
         }
         public int GetProductPrice()
         {
-            var result = Ingredients.Select(i => i.Price).Sum() * (Markup + 100) / 100;
+            var result = (Ingredients.Select(i => i.Price).Sum() * Markup / 100) * ProductCount;
             return result;
         }
         public int GetProductWeight()
         {
-            var totalWeight = Ingredients.Select(i => i.Weight).Sum();
+            var totalWeight = (Ingredients.Select(i => i.Weight).Sum()) * ProductCount;
             return totalWeight;
         }
 
@@ -94,9 +101,12 @@ namespace EpamWinterTraining.Products
 
         public override string ToString()
         {
-            return "BakeryProduct{ Title: " + Title + ";" +
-                "Markup: " + Markup + ";" +
-                "Ingredients: { " + string.Join(' ', Ingredients) + "}}";
+            //return "BakeryProduct{ Title: " + Title + ";" +
+            //    "Markup: " + Markup + ";" +
+            //    "Ingredients: { " + string.Join(' ', Ingredients) + "}}";
+
+            return $"{Title}({ProductCount})\n\tMarkup:{Markup}%\n\tIngredients\n\t\t{string.Join("\n\t\t", Ingredients)}";
+            
             //"Product calorific: " + GetProductCalorific() + ";" +
             //"Product price: " + GetProductPrice() + ";" +
             //"Product weight: " + GetProductWeight() + "; " +

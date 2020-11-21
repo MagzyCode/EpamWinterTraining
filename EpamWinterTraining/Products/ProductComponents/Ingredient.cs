@@ -92,10 +92,11 @@ namespace EpamWinterTraining.Products.ProductComponents
 
         public override string ToString()
         {
-            return "Ingredient{ Title : " + Title + ";" + 
-                " Product calorific : " + GetProductCalorific() + ";" +
-                " Product price : " + GetProductPrice() + ";" +
-                " Product weight : " + Weight + "}";
+            //return "Ingredient{ Title : " + Title + ";" + 
+            //    " Product calorific : " + GetProductCalorific() + ";" +
+            //    " Product price : " + GetProductPrice() + ";" +
+            //    " Product weight : " + Weight + "}";
+            return $"{Title}; {Weight} гр.; {Price} руб.; {Calorific} ккал.";
         }
 
 

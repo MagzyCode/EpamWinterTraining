@@ -26,34 +26,43 @@ namespace EpamWinterTraining.ProductManipulator
             }
         } 
 
-        public BakeryProduct[] RegularizeProducts()
+        public BakeryProduct[] RegularizeProductsByCalorific()
         {
-            var products = Bakery.Products;
-            Array.Sort(products);
+            var products = Bakery.Products.OrderBy(i => i.GetProductCalorific()).ToArray();
+            return products;
+        }
+
+        public BakeryProduct[] RegularizeProductsByPrice()
+        {
+            var products = Bakery.Products.OrderBy(i => i.GetProductPrice()).ToArray();
             return products;
         }
 
         public BakeryProduct[] FindSimilarProducts(BakeryProduct product)
         {
-            var products = Bakery.Products;
-            var result = products.Where(i => i == product).ToArray();
-            return result;
+            var products = Bakery.Products.Where(i => i == product).ToArray();
+            // var result = products.;
+            return products;
         }
 
         public BakeryProduct[] FindByVolume(string ingredientName, int weight)
         {
-            var products = Bakery.Products;
-            var result = products.
+            var products = Bakery.Products.
                 Where(i => i.Ingredients.Any(e => e.Title == ingredientName && e.Weight > weight)).
                 ToArray();
-            return result;
+            return products;
+            //var result = products.
+            //    Where(i => i.Ingredients.Any(e => e.Title == ingredientName && e.Weight > weight)).
+            //    ToArray();
+            //return result;
         }
 
         public BakeryProduct[] FindByIngredientAmount(int amount)
         {
-            var products = Bakery.Products;
-            var result = products.Where(i => i.IngredientAmount > amount).ToArray();
-            return result;
+            var products = Bakery.Products.Where(i => i.IngredientAmount > amount).ToArray();
+            return products;
+            // var result = products.Where(i => i.IngredientAmount > amount).ToArray();
+            // return result;
         }
     }
 }
