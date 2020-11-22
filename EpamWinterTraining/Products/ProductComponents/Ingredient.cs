@@ -7,30 +7,56 @@ namespace EpamWinterTraining.Products.ProductComponents
     public class Ingredient
     {
         /// <summary>
-        /// Caloric content of the product per hundred grams.
+        /// Calorific content of the product per hundred grams.
         /// </summary>
         private int _calorific;
         /// <summary>
         /// The price of the product per hundred grams.
         /// </summary>
-        private int _price;
+        private double _price;
+        /// <summary>
+        /// Weight of the ingredient.
+        /// </summary>
         private int _weight;
+        /// <summary>
+        /// Name of the ingredient.
+        /// </summary>
         private string _title;
 
+        /// <summary>
+        /// Standard weight unit of calculation.
+        /// </summary>
         public const int STANDART_GRAMMING = 100;
 
-        public Ingredient(string title, int calorific, int price)
+        /// <summary>
+        /// Initializes the product ingredient object.
+        /// </summary>
+        /// <param name="title">Name of the ingredient.</param>
+        /// <param name="calorific">Caloric content of the product per hundred grams.</param>
+        /// <param name="price">The price of the product per hundred grams.</param>
+        public Ingredient(string title, int calorific, double price)
         {
             Title = title;
             Calorific = calorific;
             Price = price;
         }
 
-        public Ingredient(string title, int calorific, int price, int weight) : this(title, calorific, price)
+        /// <summary>
+        /// Initializes the product ingredient object.
+        /// </summary>
+        /// <param name="title">Name of the ingredient.</param>
+        /// <param name="calorific">Calorific content of the product per hundred grams.</param>
+        /// <param name="price">The price of the product per hundred grams.</param>
+        /// <param name="weight">Weight of the ingredient.</param>
+        public Ingredient(string title, int calorific, double price, int weight) : this(title, calorific, price)
         {
             Weight = weight;
         }
 
+
+        /// <summary>
+        /// Weight of the ingredient.
+        /// </summary>
         public int Weight
         {
             get
@@ -41,6 +67,9 @@ namespace EpamWinterTraining.Products.ProductComponents
            
         }
 
+        /// <summary>
+        /// Calorific content of the product per hundred grams.
+        /// </summary>
         public int Calorific
         {
             get
@@ -50,7 +79,10 @@ namespace EpamWinterTraining.Products.ProductComponents
             private set => _calorific = value > 0 ? value : 0;
         }
 
-        public int Price
+        /// <summary>
+        /// The price of the product per hundred grams.
+        /// </summary>
+        public double Price
         {
             get
             {
@@ -58,6 +90,10 @@ namespace EpamWinterTraining.Products.ProductComponents
             }
             private set => _price = value > 0 ? value : 0;
         }
+
+        /// <summary>
+        /// Name of the ingredient.
+        /// </summary>
         public string Title
         {
             get
@@ -78,13 +114,21 @@ namespace EpamWinterTraining.Products.ProductComponents
             }
         }
 
-        public int GetProductCalorific()
+        /// <summary>
+        /// Calculates the caloric content of an ingredient based on its weight.
+        /// </summary>
+        /// <returns>Returns the total calorie content of the ingredient.</returns>
+        public int GetIngredientCalorific()
         {
             var productCalorific = Weight / STANDART_GRAMMING * Calorific;
             return productCalorific;
         }
 
-        public int GetProductPrice()
+        /// <summary>
+        /// Calculates the price of an ingredient based on its weight.
+        /// </summary>
+        /// <returns>Returns the total cost of the ingredient.</returns>
+        public double GetIngredientPrice()
         {
             var productPrice = Weight / STANDART_GRAMMING * Price;
             return productPrice;
@@ -92,10 +136,6 @@ namespace EpamWinterTraining.Products.ProductComponents
 
         public override string ToString()
         {
-            //return "Ingredient{ Title : " + Title + ";" + 
-            //    " Product calorific : " + GetProductCalorific() + ";" +
-            //    " Product price : " + GetProductPrice() + ";" +
-            //    " Product weight : " + Weight + "}";
             return $"{Title}; {Weight} гр.; {Price} руб.; {Calorific} ккал.";
         }
 

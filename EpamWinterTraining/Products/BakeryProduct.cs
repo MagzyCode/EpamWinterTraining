@@ -6,26 +6,54 @@ using System.Linq;
 
 namespace EpamWinterTraining.Products
 {
-    public class BakeryProduct : IProduct, IComparable<BakeryProduct>
+    public class BakeryProduct : IProduct
     {
+        /// <summary>
+        /// Mark-up on the manufactured product.
+        /// </summary>
         private int _markup;
+        /// <summary>
+        /// Product name.
+        /// </summary>
         private string _title;
+        /// <summary>
+        /// The list of ingredients of the product.
+        /// </summary>
         private List<Ingredient> _ingredients = new List<Ingredient>();
 
-        public BakeryProduct(List<Ingredient> products, string title, CategoricalMarkup markup)
+        /// <summary>
+        /// Initializes the bakery item object.
+        /// </summary>
+        /// <param name="products">The list of ingredients of the product.</param>
+        /// <param name="title">Product name.</param>
+        /// <param name="markup">Mark-up on the manufactured product.</param>
+        /// <param name="productAmount">Quantity of product in the bakery's warehouse.</param>
+        public BakeryProduct(List<Ingredient> products, string title, CategoricalMarkup markup, int productAmount = 1)
         {
             Ingredients = products;
             Markup = (int)markup;
             Title = title;
+            ProductCount = productAmount;
         }
 
-        public BakeryProduct(List<Ingredient> products, int markup, string title)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="products">The list of ingredients of the product.</param>
+        /// <param name="markup">Mark-up on the manufactured product.</param>
+        /// <param name="title">Product name.</param>
+        /// <param name="productAmount">Quantity of product in the bakery's warehouse.</param>
+        public BakeryProduct(List<Ingredient> products, int markup, string title, int productAmount = 1)
         {
             Ingredients = products;
-            Markup = (int)markup;
+            Markup = markup;
             Title = title;
+            ProductCount = productAmount;
         }
 
+        /// <summary>
+        /// Product name.
+        /// </summary>
         public string Title
         {
             get
@@ -45,6 +73,9 @@ namespace EpamWinterTraining.Products
                 }
             }
         }
+        /// <summary>
+        /// Mark-up on the manufactured product.
+        /// </summary>
         public int Markup
         {
             get
@@ -56,6 +87,9 @@ namespace EpamWinterTraining.Products
                 _markup = value > 100 ? value : 100;
             }
         }
+        /// <summary>
+        /// The list of ingredients of the product.
+        /// </summary>
         public List<Ingredient> Ingredients
         {
             get
@@ -64,6 +98,9 @@ namespace EpamWinterTraining.Products
             }
             set => _ingredients = value ?? throw new NullReferenceException("List of ingredients can't be null");
         }
+        /// <summary>
+        /// The number of ingredients in the product.
+        /// </summary>
         public int IngredientAmount
         {
             get
@@ -71,21 +108,38 @@ namespace EpamWinterTraining.Products
                 return Ingredients.Count;
             }
         }
-        public int ProductCount { get; } = 1;
+        /// <summary>
+        /// Quantity of product in the bakery's warehouse.
+        /// </summary>
+        public int ProductCount { get; private set; }
 
+        /// <summary>
+        /// Gets the calorie content of one serving of the dish.
+        /// </summary>
+        /// <returns></returns>
         public int GetProductCalorific()
         {
-            var result = Ingredients.Select(i => i.Calorific).Sum() * ProductCount;
+            var result = Ingredients.Select(i => i.Calorific * i.Weight / 100).Sum();
             return result;
         }
-        public int GetProductPrice()
+        /// <summary>
+        /// Gets the price of one serving of the dish.
+        /// </summary>
+        /// <returns></returns>
+        public double GetProductPrice()
         {
-            var result = (Ingredients.Select(i => i.Price).Sum() * Markup / 100) * ProductCount;
+            var result = Ingredients.Select(i => i.Price * i.Weight / 100).Sum() * Markup / 100;
+            result = Math.Round(result, 2);
             return result;
         }
+
+        /// <summary>
+        /// Gets the weight of one serving of the dish
+        /// </summary>
+        /// <returns></returns>
         public int GetProductWeight()
         {
-            var totalWeight = (Ingredients.Select(i => i.Weight).Sum()) * ProductCount;
+            var totalWeight = Ingredients.Select(i => i.Weight).Sum();
             return totalWeight;
         }
 
@@ -101,23 +155,17 @@ namespace EpamWinterTraining.Products
 
         public override string ToString()
         {
-            //return "BakeryProduct{ Title: " + Title + ";" +
-            //    "Markup: " + Markup + ";" +
-            //    "Ingredients: { " + string.Join(' ', Ingredients) + "}}";
-
-            return $"{Title}({ProductCount})\n\tMarkup:{Markup}%\n\tIngredients\n\t\t{string.Join("\n\t\t", Ingredients)}";
-            
-            //"Product calorific: " + GetProductCalorific() + ";" +
-            //"Product price: " + GetProductPrice() + ";" +
-            //"Product weight: " + GetProductWeight() + "; " +
-
+            return $"{Title}({ProductCount})\n\tMarkup:{Markup}%\n\tIngredients:\n\t\t" +
+                $"{string.Join("\n\t\t", Ingredients)}";
         }
 
-        public int CompareTo(BakeryProduct other)
-        {
-            return GetProductCalorific().CompareTo(other.GetProductCalorific());
-        }
 
+        /// <summary>
+        /// Compares products for equality by their cost and caloric content.
+        /// </summary>
+        /// <param name="left">Left operand.</param>
+        /// <param name="right">Right operand.</param>
+        /// <returns>Returns true if the products are equal in calories and cost.</returns>
         public static bool operator ==(BakeryProduct left, BakeryProduct right)
         {
             var result = (left.GetProductCalorific() == right.GetProductCalorific()) &&

@@ -1,9 +1,12 @@
 ﻿namespace EpamWinterTraining.Products
 {
+    /// <summary>
+    /// Interface for the main implemented methods for any bakery product.
+    /// </summary>
     public interface IProduct
     {
         int GetProductCalorific();
-        int GetProductPrice();
+        double GetProductPrice();
         int GetProductWeight();
     }
 }
