@@ -1,25 +1,36 @@
-﻿namespace EpamWinterTraining.Products
+﻿using EpamWinterTraining.Products.ProductInformation;
+using System.ComponentModel.DataAnnotations;
+
+namespace EpamWinterTraining.Products
 {
     public abstract class ProductionProduct : Product
     {
-        private int _energyValue;
-
-        public ProductionProduct(string title, int markup, double purchasePrice, int energyValue, int count):
-            base(title, markup, purchasePrice, count)
+        public ProductionProduct(ProductInfo productInfo, int energyValue):
+            base(productInfo)
         {
             EnergyValue = energyValue;
         }
 
-        public int EnergyValue
+        [Range(0, int.MaxValue, ErrorMessage = "The product energy value must not be less than 0.")]
+        public int EnergyValue { get; set; }
+
+        private protected static int GetEnergyValue(ProductionProduct left, ProductionProduct right)
         {
-            get
+            var energyValue = (left.EnergyValue * left.ProductUnitNumber +
+                right.EnergyValue * right.ProductUnitNumber) / (left.ProductUnitNumber + right.ProductUnitNumber);
+            return energyValue;
+        }
+
+        private protected static T GetActualConvertedProduct<T, K>(K product)
+            where T : ProductionProduct, new()
+            where K : ProductionProduct
+        {
+            var result = new T()
             {
-                return _energyValue;
-            }
-            set
-            {
-                _energyValue = value;
-            }
+                _productInfo = product._productInfo,
+                EnergyValue = product.EnergyValue
+            };
+            return result;
         }
     }
 }

@@ -1,27 +1,47 @@
-﻿using EpamWinterTraining.Products.ProductRadiation;
+﻿using EpamWinterTraining.Products.ProductInformation;
+using EpamWinterTraining.Products.ProductRadiation;
 
 namespace EpamWinterTraining.Products.SpecificProducts
 {
     public class BiochemicalProduct : NonProductionProduct
     {
-        public BiochemicalProduct(string title, int markup, double purchasePrice, int count, RadiationGroup group) :
-            base(title, markup, purchasePrice, count, group)
+        public BiochemicalProduct() : base(default, default) 
         { }
 
-        //public static BiochemicalProduct operator +(BiochemicalProduct left, BiochemicalProduct right)
-        //{
-        //    if (left.Title != right.Title)
-        //    {
-        //        throw new System.Exception();
-        //    }
+        public BiochemicalProduct(ProductInfo productInfo, RadiationGroup group) :
+            base(productInfo, group)
+        { }
 
-        //    var count = left.ProductUnitNumber + right.ProductUnitNumber;
-        //    var markup = (left.ProductUnitNumber * left.ProductUnitNumber +
-        //        right.ProductUnitNumber * right.ProductUnitNumber) / count;
-        //    var price = (left.PurchasePrice * left.ProductUnitNumber +
-        //        right.PurchasePrice * right.ProductUnitNumber) / count;
+        public static BiochemicalProduct operator +(BiochemicalProduct left, BiochemicalProduct right)
+        {
+            ProductInfo info = GetAddition(left, right);
+            RadiationGroup group = GetRadiationGroup(left, right);
+            var product = new BiochemicalProduct(info, group);
+            return product;
+        }
 
-        //    // var
-        //}
+        public static BiochemicalProduct operator -(BiochemicalProduct left, int right)
+        {
+            var result = GetSubtraction(left, right);
+            return result;
+        }
+
+        public static explicit operator GastronomicProduct(BiochemicalProduct product)
+        {
+            var result = GetBaseConvertedProduct<GastronomicProduct, BiochemicalProduct>(product);
+            return result;
+        }
+
+        public static explicit operator GroceryProduct(BiochemicalProduct product)
+        {
+            var result = GetBaseConvertedProduct<GroceryProduct, BiochemicalProduct>(product);
+            return result;
+        }
+
+        public static explicit operator HouseholdProduct(BiochemicalProduct product)
+        {
+            var result = GetActualConvertedProduct<HouseholdProduct, BiochemicalProduct>(product);
+            return result;
+        }
     }
 }
