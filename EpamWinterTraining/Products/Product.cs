@@ -1,27 +1,40 @@
-﻿using EpamWinterTraining.Products.ProductInformation;
+﻿using EpamWinterTraining.ProductExceptions;
+using EpamWinterTraining.Products.ProductInformation;
 using System;
 
 namespace EpamWinterTraining.Products
 {
-    public abstract class Product : IProduct
+    public class Product : IProduct
     {
-        //private string _title;
-        //private int _productUnitNumber;
-        //private int _markup;
-        //private double _purchasePrice;
-
+        /// <summary>
+        /// Basic information about the product.
+        /// </summary>
         private protected ProductInfo _productInfo;
 
-        protected Product()
+        private protected Product()
         { }
+
+        /// <summary>
+        /// Initializes an object of the type Product.
+        /// </summary>
+        /// <param name="productInfo">Basic information about the product.</param>
         public Product(ProductInfo productInfo)
         {
             Title = productInfo.Title;
             Markup = productInfo.Markup;
             PurchasePrice = productInfo.PurchasePrice;
             ProductUnitNumber = productInfo.ProductUnitNumber;
+            ProductType = GetType().Name;
         }
 
+        /// <summary>
+        /// Type of goods.
+        /// </summary>
+        public string ProductType { get; set; }
+
+        /// <summary>
+        /// Name of produce.
+        /// </summary>
         public string Title
         {
             get
@@ -34,6 +47,9 @@ namespace EpamWinterTraining.Products
             }
         }
 
+        /// <summary>
+        /// The number of units of the product.
+        /// </summary>
         public int ProductUnitNumber
         {
             get
@@ -46,6 +62,9 @@ namespace EpamWinterTraining.Products
             }
         }
 
+        /// <summary>
+        /// The markup on the product.
+        /// </summary>
         public int Markup
         {
             get
@@ -58,6 +77,9 @@ namespace EpamWinterTraining.Products
             }
         }
 
+        /// <summary>
+        /// Purchase price for the product.
+        /// </summary>
         public double PurchasePrice
         {
             get
@@ -74,13 +96,6 @@ namespace EpamWinterTraining.Products
         {
             return obj is Product info &&
                    info._productInfo == _productInfo;
-            //if (obj == null || GetType() != obj.GetType())
-            //{
-            //    return false;
-            //}
-            //var product = obj as Product;
-            //var result = _productInfo == product._productInfo;
-            //return result;
         }
 
         public override int GetHashCode()
@@ -93,34 +108,57 @@ namespace EpamWinterTraining.Products
             return base.ToString();
         }
 
+        /// <summary>
+        /// Getting the cost per unit of production, taking into account the markup.
+        /// </summary>
+        /// <returns></returns>
         public double GetSingleProductPrice()
         {
-            return (PurchasePrice * Markup);
+            return Math.Round(((PurchasePrice * Markup) / 100), 2);
         }
 
+
+        /// <summary>
+        /// Getting the total cost of products, including margins and the number of units.
+        /// </summary>
+        /// <returns></returns>
         public double GetTotalProductPrice()
         {
-            return (GetSingleProductPrice() * ProductUnitNumber);
+            return Math.Round((GetSingleProductPrice() * ProductUnitNumber), 2);
         }
 
+        /// <summary>
+        /// The conversion prices of the goods to the penny.
+        /// </summary>
+        /// <param name="product">A convertible product.</param>
         public static explicit operator int(Product product)
         {
-            var result = (int)(product.PurchasePrice * product.Markup) * 100;
+            var result = (int)(product.PurchasePrice * product.Markup);
             return result;
         }
 
+        /// <summary>
+        /// Converting a product to a real type.
+        /// </summary>
+        /// <param name="product">A convertible product.</param>
         public static explicit operator double(Product product)
         {
-            var result = Math.Round((product.PurchasePrice * product.Markup), 2);
+            var result = Math.Round((product.PurchasePrice * product.Markup / 100), 2);
             return result;
         }
 
+        /// <summary>
+        /// Initialize the basic information about the product with the sum of two products.
+        /// </summary>
+        /// <param name="left">Left operator.</param>
+        /// <param name="right">Right operator.</param>
+        /// <returns></returns>
         private protected static ProductInfo GetAddition(Product left, Product right)
         {
             if (left.Title != right.Title)
             {
-                // вызываем собственное исключение
-                // throw new System.Exception();
+               throw new ImpossibleOperationException("It is not possible to add products due to " +
+                   "a mismatch in the name.");
             }
             var count = left.ProductUnitNumber + right.ProductUnitNumber;
             var markup = (left.Markup * left.ProductUnitNumber +
@@ -132,17 +170,32 @@ namespace EpamWinterTraining.Products
             return productInfo;
         }
 
+        /// <summary>
+        /// Gets a new product by subtracting the number of product units from the specified product.
+        /// </summary>
+        /// <typeparam name="T">Product type.</typeparam>
+        /// <param name="product">Converted produc.</param>
+        /// <param name="number">The subtracted number of product units.</param>
+        /// <returns></returns>
         private protected static T GetSubtraction<T>(T product, int number) where T : Product
         {
             if (product.ProductUnitNumber < number)
             {
-                // вызов соответсвествующего исключения
+                throw new ImpossibleOperationException("The subtracted number from the product cannot" +
+                    " exceed the number of units of the product.");
             }
             var baseProduct = (T) product.MemberwiseClone();
             baseProduct.ProductUnitNumber -= number;
             return baseProduct;
         }
 
+        /// <summary>
+        /// Getting basic information about the product when converting it.
+        /// </summary>
+        /// <typeparam name="T">The resulting type.</typeparam>
+        /// <typeparam name="K">The type to convert.</typeparam>
+        /// <param name="product">The product being converted.</param>
+        /// <returns></returns>
         private protected static T GetBaseConvertedProduct<T, K>(K product)
                 where T : Product, new()
                 where K : Product

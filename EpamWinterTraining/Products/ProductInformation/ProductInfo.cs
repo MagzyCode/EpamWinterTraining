@@ -1,10 +1,19 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 
 namespace EpamWinterTraining.Products.ProductInformation
 {
+    /// <summary>
+    /// A structure that represents basic information about the product.
+    /// </summary>
     public struct ProductInfo : IProductInfo
     {
+        /// <summary>
+        /// Initializes the product information object.
+        /// </summary>
+        /// <param name="title">Name of produce.</param>
+        /// <param name="markup">The markup on the product.</param>
+        /// <param name="purchasePrice">Purchase price for the product.</param>
+        /// <param name="count">The number of units of the product.</param>
         public ProductInfo(string title, int markup, double purchasePrice, int count)
         {
             Title = title;
@@ -13,20 +22,24 @@ namespace EpamWinterTraining.Products.ProductInformation
             ProductUnitNumber = count;
         }
 
-        [Required(ErrorMessage = "The product name must be initiated.")]
-        [MinLength(0, ErrorMessage = "The product name must not be less than 0.")]
+        /// <summary>
+        /// Name of produce.
+        /// </summary>
         public string Title { get; set; }
 
-        [Required(ErrorMessage = "The product unit number must be initiated.")]
-        [Range(0, int.MaxValue, ErrorMessage = "The product name must not be less than 0.")]
+        /// <summary>
+        /// The number of units of the product.
+        /// </summary>
         public int ProductUnitNumber { get; set; }
 
-        [Required(ErrorMessage = "The product markup must be initiated.")]
-        [Range(100, int.MaxValue, ErrorMessage = "The product name must not be less than 100%.")]
+        /// <summary>
+        /// The markup on the product.
+        /// </summary>
         public int Markup { get; set; }
 
-        [Required(ErrorMessage = "The product purchase price must be initiated.")]
-        [Range(0, int.MaxValue, ErrorMessage = "The product name must not be less than 0.")]
+        /// <summary>
+        /// Purchase price for the product.
+        /// </summary>
         public double PurchasePrice { get; set; }
 
         public override bool Equals(object obj)
@@ -43,6 +56,12 @@ namespace EpamWinterTraining.Products.ProductInformation
             return HashCode.Combine(Title, ProductUnitNumber, Markup, PurchasePrice);
         }
 
+        /// <summary>
+        /// An equality comparison operation. It is based on equality of structure properties.
+        /// </summary>
+        /// <param name="left">Left operand.</param>
+        /// <param name="right">Right operand.</param>
+        /// <returns>Returns true if the values of all properties match. In the opposite case, false.</returns>
         public static bool operator == (ProductInfo left, ProductInfo right)
         {
             return (left.Markup == right.Markup) &&
@@ -51,6 +70,12 @@ namespace EpamWinterTraining.Products.ProductInformation
                 (left.Title == right.Title);
         }
 
+        /// <summary>
+        /// The inequality comparison operation is based on the equality of structure properties.
+        /// </summary>
+        /// <param name="left">Left operand.</param>
+        /// <param name="right">Right operand.</param>
+        /// <returns>Returns true if the values of any properties doesn't match. In the opposite case, false.</returns>
         public static bool operator !=(ProductInfo left, ProductInfo right)
         {
             return !(left == right);

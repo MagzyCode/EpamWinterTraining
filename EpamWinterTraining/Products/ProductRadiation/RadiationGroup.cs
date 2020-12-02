@@ -3,23 +3,23 @@
     public enum RadiationGroup
     {
         /// <summary>
-        /// Безопасный уровень радиации.
+        /// Safe level of radiation.
         /// </summary>
         E,
         /// <summary>
-        /// Малый уровень радиации.
+        /// Low level of radiation.
         /// </summary>
         D,
         /// <summary>
-        /// Средний уровень радиации.
+        /// The average level of radiation.
         /// </summary>
         C,
         /// <summary>
-        /// Высокий уровень радиации.
+        /// High level of radiation.
         /// </summary>
         B,
         /// <summary>
-        /// Особо высокий уровень радиации.
+        /// Particularly high levels of radiation.
         /// </summary>
         A
     }
