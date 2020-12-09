@@ -11,45 +11,40 @@ namespace EpamWinterTraining.FiguresCollection
 {
     public class Box
     {
-        #region Fields
+
         /// <summary>
-        /// Максимальное количество фигур в коробке.
+        /// Maximum number of shapes in a box.
         /// </summary>
         public const int MAX_COUNT_OF_FIGURES = 20;
         /// <summary>
-        /// Фигуры в коробке.
+        /// Shapes in a box.
         /// </summary>
         private readonly IFigure[] _figures = new IFigure[MAX_COUNT_OF_FIGURES];
 
-        #endregion
+        public Box()
+        { }
 
-        #region Constructors
+        public Box(IFigure[] figures)
+        {
+            Figures = figures;
+        }
 
-        #endregion
-
-        #region Indexer
         /// <summary>
-        /// Индексатор, по обращению к фигурам в коробке
-        /// по номеру, без изъятие из неё.
+        /// The indexer, at the request of the shapes in the box according to the room, without taking out of it.
         /// </summary>
-        /// <param name="index">Индекс фигуры.</param>
-        /// <returns>Возвращает фигуру по индексу.</returns>
+        /// <param name="index">Shape index.</param>
+        /// <returns>Returns the shape by index.</returns>
         public IFigure this[int index]
         {
             get
             {
-                return Figures[index].Clone() as IFigure;
+                return Figures[index];
             }
         }
 
-        #endregion
-
-        #region Properties
         /// <summary>
-        /// Возвращает все фигуры из коробки.
-        /// В случае присвоения коробке определённого
-        /// количества фигур, будет занесено только 
-        /// 20 первых фигур.
+        /// Returns all shapes from the box. If you assign a certain number of shapes 
+        /// to a box, only the first 20 shapes will be entered.
         /// </summary>
         public IFigure[] Figures
         {
@@ -60,60 +55,36 @@ namespace EpamWinterTraining.FiguresCollection
 
             set
             {
-                var lenght = value.Length <= MAX_COUNT_OF_FIGURES ? value.Length : MAX_COUNT_OF_FIGURES;
-                Array.Copy(value, 0, _figures, 0, lenght);
+                bool isSequenceCorrect = value.All(i => i != null);
+                if (isSequenceCorrect)
+                {
+                    var lenght = value.Length <= MAX_COUNT_OF_FIGURES ? value.Length : MAX_COUNT_OF_FIGURES;
+                    Array.Copy(value, 0, _figures, 0, lenght);
+                }
+                else
+                {
+                    throw new Exception();
+                }
+               
             }
 
         }
 
         /// <summary>
-        /// Возвращает количество фигур, 
-        /// которое находится в коробке сейчас.
+        /// Returns the number of shapes that are currently in the box.
         /// </summary>
         public int Count
         {
             get
             {
-                // int index = Figures.Where(i => i != null).Count();
-                var index = 0;
-                foreach (var item in Figures)
-                {
-                    if (item != null)
-                    {
-                        index++;
-                    }
-                }
-                return index;
+                return Figures.Where(i => i != null).Count();
             }
         }
-
-        public double TotalPerimeter
-        {
-            get
-            {
-                return GetTotalPerimeter();
-            }
-        }
-
-        public double TotalArea
-        {
-            get
-            {
-                return GetTotalArea();
-            }
-        }
-
-        #endregion
-
-        #region Methods
 
         /// <summary>
-        /// Метод по изъятию все кругов из коробки.
-        /// При этом круги в коробке удаляются.
+        /// Method for removing all circles from the box. This removes the circles in the box.
         /// </summary>
-        /// <returns>Возвращает все круги из коробки.</returns>
-        /// 
-        /// Нужно переделать под овалы, которые являются кругами
+        /// <returns>Returns all the circles out of the box.</returns>
         public Oval[] GetAllCircles()
         {
             var circles = new Oval[MAX_COUNT_OF_FIGURES];
@@ -133,9 +104,9 @@ namespace EpamWinterTraining.FiguresCollection
         }
 
         /// <summary>
-        /// Метод по изъятию всех плёночный фигур.
+        /// Method for the removal of all film shapes.
         /// </summary>
-        /// <returns>Возвращает все плёночные фигуры из коробки</returns>
+        /// <returns>Returns all film shapes from the box.</returns>
         public IFigure[] GetAllFilmFigures()
         {
             var figures = new IFigure[MAX_COUNT_OF_FIGURES];
@@ -155,9 +126,31 @@ namespace EpamWinterTraining.FiguresCollection
         }
 
         /// <summary>
-        /// Добавление уникальной по цвету и типу фигуры.
+        /// Returns all non-painted plastic figure from the box.
         /// </summary>
-        /// <param name="figure">Фигура для добавления.</param>
+        /// <returns></returns>
+        public IFigure[] GetNotColoredPlasticFigures()
+        {
+            var figures = new IFigure[MAX_COUNT_OF_FIGURES];
+            var counter = 0;
+            for (int i = 0; i < Count; i++)
+            {
+                if (Figures[i].IsFigureСolorable == StainAbility.CanDrawAlways && Figures[i].IsFigureColored == false)
+                {
+                    figures[counter++] = Figures[i];
+                    RemoveFigure(i);
+                }
+            }
+
+            var numberOfElements = figures.Where(i => i != null).Count();
+            Array.Resize(ref figures, numberOfElements);
+            return figures;
+        }
+
+        /// <summary>
+        /// Adding a shape that is unique in color and type.
+        /// </summary>
+        /// <param name="figure">Shape to add.</param>
         public void AddFigure(IFigure figure)
         {
             if (figure == null)
@@ -177,9 +170,9 @@ namespace EpamWinterTraining.FiguresCollection
         }
 
         /// <summary>
-        /// Удаление фигуры из коробки по заданному индексу.
+        /// Deleting a shape from the box by the specified index.
         /// </summary>
-        /// <param name="index">Индекс удаляемой фигуры.</param>
+        /// <param name="index">Index of the shape to delete.</param>
         public void RemoveFigure(int index)
         {
             if ((index >= MAX_COUNT_OF_FIGURES) || (index < 0))
@@ -190,26 +183,33 @@ namespace EpamWinterTraining.FiguresCollection
         }
 
         /// <summary>
-        /// Замена фигур.
+        /// Replacement pieces.
         /// </summary>
-        /// <param name="index">Индекс заменяемой фигуры.</param>
-        /// <param name="figure">Новая фигура.</param>
+        /// <param name="index">Index of the shape being replaced.</param>
+        /// <param name="figure">New figure.</param>
         public void ReplaceFigure(int index, IFigure figure)
         {
-            Figures[index] = figure ?? throw new NullReferenceException();
+            if ((index >= MAX_COUNT_OF_FIGURES) || (index < 0))
+            {
+                throw new IndexOutOfRangeException();
+            }
+            else
+            {
+                Figures[index] = figure ?? throw new NullReferenceException();
+            }
         }
 
         /// <summary>
-        /// Нахождение фигуры по характеристикам.
+        /// Finding a shape by characteristics.
         /// </summary>
-        /// <param name="figureType">Тип фигуры.</param>
-        /// <param name="color">Цвет фигуры.</param>
+        /// <param name="figureType">Type of shape.</param>
+        /// <param name="color">The color of the shape.</param>
         /// <returns></returns>
         public IFigure Find(Type figureType, FigureColor color)
         {
             foreach (IFigure item in Figures)
             {
-                if ((item.GetType() == figureType) && (item.ColorOfFigure == color))
+                if ((item != null) &&(item.GetType() == figureType) && (item.ColorOfFigure == color))
                 {
                     return item;
                 }
@@ -218,105 +218,81 @@ namespace EpamWinterTraining.FiguresCollection
         }
 
         /// <summary>
-        /// Метод сохранения фигур из коробки в файл,
-        /// используя StreamWriter.
+        /// Method for saving shapes from a box to a file using StreamWriter.
         /// </summary>
-        /// <param name="path">Путь к файлу сохранения.</param>
+        /// <param name="path">Path to the save file.</param>
         public void SaveFiguresUsingStreamWriter(string path = StreamAccess.myPath)
         {
             StreamAccess.Save(Figures, path);
         }
 
         /// <summary>
-        /// Метод сохранения фигур, учитывая их материал,
-        /// из коробки в файл, используя StreamWriter.
+        /// A method for saving shapes, given their material, from a box to a file using StreamWriter.
         /// </summary>
-        /// <param name="material">Материал для сохранения.</param>
-        /// <param name="path">Путь к файлу.</param>
+        /// <param name="material">Material to be stored.</param>
+        /// <param name="path">File path.</param>
         public void SaveFiguresUsingStreamWriter(FigureMaterial material, string path = StreamAccess.myPath)
         {
             StreamAccess.Save(Figures, material, path);
         }
 
         /// <summary>
-        /// Метод загрузки фигур из файла
-        /// в фигуру, используя StreamReader.
+        /// Method for loading shapes from a file to a shape using StreamReader.
         /// </summary>
-        /// <param name="path">Путь к файлу изъятия.</param>
+        /// <param name="path">Path to the withdrawal file.</param>
         public void LoadFiguresUsingStreamReader(string path = StreamAccess.myPath)
         {
             Figures = StreamAccess.LoadFile(path);
         }
 
         /// <summary>
-        /// Метод сохранения фигур из коробки в файл,
-        /// используя XmlWriter.
+        /// Method for saving shapes from a box to a file using XmlWriter.
         /// </summary>
-        /// <param name="path">Путь к файлу сохранения.</param>
+        /// <param name="path">Path to the save file.</param>
         public void SaveFiguresUsingXmlWriter(string path = XmlAccess.myPath)
         {
             XmlAccess.Save(Figures, path);
         }
 
         /// <summary>
-        /// Метод сохранения фигур, учитывая их материал,
-        /// из коробки в файл, используя XmlWriter.
+        /// Method for saving shapes, taking into account their material, from the box to a file using XmlWriter.
         /// </summary>
-        /// <param name="material">Материал для сохранения.</param>
-        /// <param name="path">Путь к файлу.</param>
+        /// <param name="material">Material to be stored.</param>
+        /// <param name="path">File path.</param>
         public void SaveFiguresUsingXmlWriter(FigureMaterial material, string path = XmlAccess.myPath)
         {
             XmlAccess.Save(Figures, material, path);
         }
 
         /// <summary>
-        /// Метод загрузки фигур из файла
-        /// в фигуру, используя XmlReader.
+        /// Method for loading shapes from a file to a shape using XmlReader.
         /// </summary>
-        /// <param name="path">Путь к файлу изъятия.</param>
+        /// <param name="path">Path to the withdrawal file.</param>
         public void LoadFiguresUsingXmlReader(string path = XmlAccess.myPath)
         {
             Figures = XmlAccess.LoadFile(path);
         }
 
         /// <summary>
-        /// Метод получения суммы всех
-        /// периметров фигур в коробке.
+        /// Method for getting the sum of all the perimeters of shapes in a box.
         /// </summary>
-        /// <returns>Общий периметр.</returns>
-        private double GetTotalPerimeter()
+        /// <returns>The total perimeter.</returns>
+        public double GetTotalPerimeter()
         {
-            var total = 0.0;
-            foreach (IFigure item in Figures)
-            {
-                if (item == null)
-                {
-                    break;
-                }
-                total += item.GetPerimeter();
-            }
+            var total = Figures.Select(i => i?.GetPerimeter()).Sum().Value;
             return total;
         }
 
         /// <summary>
-        /// Метод получения суммы всех
-        /// площадей фигур в коробке.
+        /// Method for getting the sum of all the squares of shapes in a box.
         /// </summary>
-        /// <returns>Общую площадь.</returns>
-        private double GetTotalArea()
+        /// <returns>Total area.</returns>
+        public double GetTotalArea()
         {
-            double total = 0.0;
-            foreach (IFigure item in Figures)
-            {
-                if (item == null)
-                {
-                    break;
-                }
-                total += item.GetArea();
-            }
+            var total = Figures.Select(i => i?.GetArea()).Sum().Value;
             return total;
         }
 
-        #endregion
+        
     }
 }

@@ -8,6 +8,9 @@ namespace EpamWinterTraining.Figures.SpecificFigures
 {
     public class Polygon : Figure, IFigure
     {
+        /// <summary>
+        /// Minimum number of points to create a polygon.
+        /// </summary>
         public const int NUMBER_OF_MINIMUM_POINTS = 3;
 
 
@@ -17,9 +20,9 @@ namespace EpamWinterTraining.Figures.SpecificFigures
         }
 
         /// <summary>
-        /// Инициализирует объект типа Polygon, использую значение вершин n-угольника.
+        /// Initializes an object of the Polygon type using the value of the n-gon vertices.
         /// </summary>
-        /// <param name="points">Значения вершин n-угольника.</param>
+        /// <param name="points">Values of the vertices of the n-gon.</param>
         public Polygon(FigureMaterial material, Point[] points) : base(points, material)
         {
             CheckNumberOfPoints(points);
@@ -43,6 +46,7 @@ namespace EpamWinterTraining.Figures.SpecificFigures
                 Select(i => i * xValues[yValues.IndexOf(i) + 1]).
                 Sum();
             var result = (firstCalculation - secondCalculation) / 2;
+            result = Math.Abs(result);
             return result;
         }
 
@@ -53,11 +57,9 @@ namespace EpamWinterTraining.Figures.SpecificFigures
         }
 
         /// <summary>
-        /// Метод, проверяющий можно ли создать объект
-        /// типа Polynom. В случае невозможности создания 
-        /// объкта вызывается исключение Exception.
+        /// Method that checks whether a poly-Dom object can be created. If the object cannot be created, an Exception is thrown.
         /// </summary>
-        /// <param name="points">Точки многоугольник.</param>
+        /// <param name="points">Polygon points.</param>
         private void CheckNumberOfPoints(Point[] points)
         {
             if (points.Length < NUMBER_OF_MINIMUM_POINTS)

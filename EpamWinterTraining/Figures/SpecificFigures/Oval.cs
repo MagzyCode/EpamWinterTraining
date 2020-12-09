@@ -7,17 +7,23 @@ namespace EpamWinterTraining.Figures.SpecificFigures
 {
     public class Oval : Figure, IFigure
     {
+        /// <summary>
+        /// Represents the minor diameter of the oval.
+        /// </summary>
         private readonly double _smallDiameter;
+        /// <summary>
+        /// Is a larger diameter of the oval.
+        /// </summary>
         private readonly double _bigDiameter;
 
         public Oval(IFigure figure, Point[] points) : base(figure, points)
         { }
 
         /// <summary>
-        /// Конструктор создания фигуры "Овал", использую массив точек и материал.
+        /// Constructor for creating an "Oval" shape, using an array of points and a material.
         /// </summary>
-        /// <param name="material">Материал фигуры.</param>
-        /// <param name="points">Точки прямоугольника, в который вписывается овал.</param>
+        /// <param name="material">Shape material.</param>
+        /// <param name="points">Points of the rectangle that the oval fits into.</param>
         public Oval(FigureMaterial material, Point[] points) : base(points, material)
         {
             _bigDiameter = SideSizes[0];
@@ -25,22 +31,9 @@ namespace EpamWinterTraining.Figures.SpecificFigures
         }
 
         /// <summary>
-        /// Конструктор создания овала, использующий центральную 
-        /// точку, значения перпендикулярных радиусов и материал.
+        /// Indicates whether the oval is a circle.
         /// </summary>
-        /// <param name="material">Материал фигуры./param>
-        /// <param name="centerPoint">Точка-центр овала.</param>
-        /// <param name="smallRadius">Малый радиус овала.</param>
-        /// <param name="bigRadius">Большой радиус овала.</param>
-        public Oval(FigureMaterial material, Point centerPoint, double smallRadius, double bigRadius)
-                : base(material)
-        {
-            Points = new Point[] { centerPoint };
-            _smallDiameter = smallRadius;
-            _bigDiameter = bigRadius;
-            _sideSizes = new double[] { _smallDiameter, _bigDiameter };
-        }
-
+        /// <returns></returns>
         public bool IsFigureCircle()
         {
             var result = _bigDiameter == _smallDiameter;
@@ -62,12 +55,12 @@ namespace EpamWinterTraining.Figures.SpecificFigures
         }
 
         /// <summary>
-        /// Преобразует значения точек в свойстве Points в малый и большой радиусы овала.
+        /// Converts the values of points in the Points property to the small and large radii of the oval.
         /// </summary>
-        /// <returns>Возвращает массив сторон(диаметров) овала.</returns>
+        /// <returns>Returns an array of sides(diameters) of the oval.</returns>
         public override double[] GetSideSizesFromPoints()
         {
-            var (xDifferenct, yDifference) = (_bigDiameter, _smallDiameter);
+            var (xDifferenct, yDifference) = Point.GetDifferenceOfAxis(Points[0], Points[1]);
             if (xDifferenct > yDifference)
             {
                 return new double[] { xDifferenct, yDifference };

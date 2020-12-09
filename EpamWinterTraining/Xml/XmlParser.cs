@@ -10,9 +10,57 @@ namespace EpamWinterTraining.Xml
     public static class XmlParser
     {
         public const int MAX_ELEMENTS_IN_BLOCK = 20;
-        public static IFigure FigureParse(string type, string points, string color)
+
+        /// <summary>
+        /// Converts a list of properties in text format to a shape object.
+        /// </summary>
+        /// <param name="properies">Shape properties.</param>
+        /// <returns>Parsed figure.</returns>
+        public static IFigure FigureParse(string[] properies)
         {
-            var figurePoints = points.Split(',');
+            Point[] points = GetPoints(properies[1]);
+            var figureColor = (FigureColor)Enum.Parse(typeof(FigureColor), properies[2]);
+            var colorable = (StainAbility)Enum.Parse(typeof(StainAbility), properies[3]);
+            var material = GetMaterialFromColor(figureColor, colorable);
+
+            var result = GetSpecificFigure(points, figureColor, properies[0], material);
+            return result;
+        }
+
+        /// <summary>
+        /// Gets the original shape material based on the shape's color and coloring ability.
+        /// </summary>
+        /// <param name="color">Figure color.</param>
+        /// <param name="colorable">Ability to stain.</param>
+        /// <returns></returns>
+        public static FigureMaterial GetMaterialFromColor(FigureColor color, StainAbility colorable)
+        {
+            if (color == FigureColor.Transparent)
+            {
+                return FigureMaterial.Film;
+            }
+            else if(colorable == StainAbility.CanDrawAlways)
+            {
+                return FigureMaterial.Plastic;
+            }
+            else
+            {
+                return FigureMaterial.Paper;
+            }
+
+        }
+
+        public static IFigure GetSpecificFigure(Point[] points, FigureColor color,
+                string type, FigureMaterial material) => type switch
+        {
+            "Oval" => new Oval(material, points) { ColorOfFigure = color },
+            "Polygon" => new Polygon(material, points) { ColorOfFigure = color },
+            _ => throw new Exception()
+        };
+
+        private static Point[] GetPoints(string points)
+        {
+            string[] figurePoints = points.Split(',');
             List<Point> listOfPoints = new List<Point>();
 
             for (int counter = 0; counter < figurePoints.Length; counter += 2)
@@ -21,28 +69,8 @@ namespace EpamWinterTraining.Xml
                 var secondNumber = Convert.ToDouble(figurePoints[counter + 1]);
                 listOfPoints.Add(new Point(firstNumber, secondNumber));
             }
-            var arrayOfPoints = listOfPoints.ToArray();
-
-            var figureColor = (FigureColor)Enum.Parse(typeof(FigureColor), color);
-            var material = XmlParser.GetMaterialFromColor(figureColor);
-
-            var result = GetSpecificFigure(arrayOfPoints, figureColor, type, material);
-            return result;
+            Point[] arrayOfPoints = listOfPoints.ToArray();
+            return arrayOfPoints;
         }
-
-        public static FigureMaterial GetMaterialFromColor(FigureColor color) => color switch
-        {
-            FigureColor.Transparent => FigureMaterial.Film,
-            _ => FigureMaterial.Paper
-        };
-
-        public static IFigure GetSpecificFigure(Point[] points, FigureColor color,
-                string type, FigureMaterial material) => type switch
-                {
-                    // "Circle" => new Circle(material, points) { ColorOfFigure = color },
-                    "Oval" => new Oval(material, points) { ColorOfFigure = color },
-                    "Polygon" => new Polygon(material, points) { ColorOfFigure = color },
-                    _ => throw new Exception()
-                };
     }
 }

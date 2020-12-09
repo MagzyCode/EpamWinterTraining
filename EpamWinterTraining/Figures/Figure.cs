@@ -7,78 +7,72 @@ using Point = EpamWinterTraining.Figures.FigureBasis.Point;
 
 namespace EpamWinterTraining.Figures
 {
-    public abstract class Figure : IFigure, ICloneable
+    public abstract class Figure : IFigure // , ICloneable
     {
-
+        /// <summary>
+        /// Minimum number of points to create a shape.
+        /// </summary>
         public const int MIN_POINTS_COUNT_VALUE = 2;
         /// <summary>
-        /// Координты вершин или центра фигуры.
+        /// Coordinates of the vertices or center of the shape.
         /// </summary>
         private protected Point[] _points;
         /// <summary>
-        /// Стороны фигуры.
+        /// Sides of the shape.
         /// </summary>
         private protected double[] _sideSizes;
         /// <summary>
-        /// Цвет фигуры.
+        /// The color of the shape.
         /// </summary>
         private protected FigureColor _color;
-        
 
-        
+
+
 
         /// <summary>
-        /// Инициализация первоначально цвета для фигуры.
+        /// Initializing the original color for the shape.
         /// </summary>
-        /// <param name="material">Материал для фигуры.</param>
+        /// <param name="material">Material for the shape.</param>
         protected Figure(FigureMaterial material)
         {
-            // инициализируем первоначальный цвет фигуры в обход свойства ColorOfFigure
             _color = GetStartColor(material);
             IsFigureСolorable = GetFigureColorable(material);
         }
 
         /// <summary>
-        /// Инициализирует объект типа Figure, основываясь на материале,
-        /// из которого будет сделана фигура и точкам на этом материале.
+        /// Initializes an object of the Figure type based on the material that the shape 
+        /// will be made from and the points on this material.
         /// </summary>
-        /// <param name="material">Материал для фигуры.</param>
-        /// <param name="points">Точки для вырезания</param>
+        /// <param name="material">Material for the shape.</param>
+        /// <param name="points">Points to cut.</param>
         public Figure(Point[] points, FigureMaterial material) : this(material)
         {
             Points = points;
             SideSizes = GetSideSizesFromPoints();
-            Perimeter = GetPerimeter();
-            Area = GetArea();
         }
 
         /// <summary>
-        /// Инициализирует объект типа Figure, используя 
-        /// существующую фигуру и новые точки для вырезания.
-        /// Если площадь новой фигиры по новым точкам будет
-        /// больше площади старой фигуры, то будет вызвано
-        /// исключение CuttingNotPossibleException.
+        /// Initializes a Figure object using an existing shape and new points to cut.
+        /// If the area of the new shape at the new points is larger than the area of the old shape, 
+        /// a CuttingNotPossibleException is thrown.
         /// </summary>
-        /// <param name="figure">Исходная фигура.</param>
-        /// <param name="newPoints">Точки, для вырезания новой фигуры.</param>
+        /// <param name="figure">The original shape.</param>
+        /// <param name="newPoints">Points for cutting a new shape.</param>
         public Figure(IFigure figure, Point[] newPoints)
         {
             Points = newPoints;
-            Area = AreaCheking(figure);
-            Perimeter = figure.Perimeter;
+            if (!AreaCheking(figure))
+            {
+                throw new Exception("The area of the cut shape cannot be larger than the original shape.");
+            }
             SideSizes = GetSideSizesFromPoints();
-            _color = figure.ColorOfFigure; // вроде как должно всё это дело свойство присваиваться, но почему-то нет
-            // ColorOfFigure = figure.ColorOfFigure;
+            _color = figure.ColorOfFigure;
             IsFigureСolorable = figure.IsFigureСolorable;
 
         }
 
-        
-
-       
-
         /// <summary>
-        /// Массив точек фигуры.
+        /// Array of shape points.
         /// </summary>
         public Point[] Points
         {
@@ -97,7 +91,7 @@ namespace EpamWinterTraining.Figures
         }
 
         /// <summary>
-        /// Массив длин сторон фигуры.
+        /// Array of lengths of the shape's sides.
         /// </summary>
         public double[] SideSizes
         {
@@ -116,11 +110,8 @@ namespace EpamWinterTraining.Figures
         }
 
         /// <summary>
-        /// Задаёт цвет фигуры. В случае, если попытаться
-        /// установить плёночной фигуре цвет, то будет вызвано
-        /// исключение DrawingNotPossibleException. Если
-        /// попытаться изменить цвет в уже закрашенной 
-        /// фигуре, то значение присвоено не будет.
+        /// Specifies the color of the shape. If you try to set a color for a film shape 
+        /// or try to change the color in an already filled shape, a DrawingNotPossibleException is thrown.
         /// </summary>
         public FigureColor ColorOfFigure
         {
@@ -131,71 +122,43 @@ namespace EpamWinterTraining.Figures
 
             set
             {
-                // зачем здесь стоит (value != FigureColor.Transparent) && (value != FigureColor.PaperDefaultColor) ????
-                // Ведь цвета фигур могут быть первоначальными
-
-                // if ((value == default) || ())
-                if (value != default && CanChangeColor(value))
+                if (CanChangeColor(value))
                 {
                     _color = value;
-                    IsFigureСolorable = true;
+                    IsFigureColored = true;
+                    IsFigureСolorable = IsFigureСolorable == StainAbility.CanDrawAlways
+                        ? StainAbility.CanDrawAlways
+                        : StainAbility.CanNotDraw;
                 }
                 else
                 {
                     throw new DrawingNotPossibleException();
                 }
-                //if ((value != default) && (value != FigureColor.Transparent) && (value != FigureColor.PaperDefaultColor) &&
-                //    IsFigureСolorable == false)
-                //{
-                //    switch (_color)
-                //    {
-                //        case FigureColor.PaperDefaultColor:
-                //            {
-                //                _color = value;
-                //                IsFigureСolorable = true;
-                //                break;
-                //            }
-                //        default: throw new DrawingNotPossibleException();
-                //    }
-                //}
             }
         }
 
         /// <summary>
-        /// Указывает, окрашивали ли фигуру. Если фигуру невозможно
-        /// окрасить, возвращает null;
+        /// Indicates whether the shape was colored. If the shape cannot be colored, returns null.
         /// </summary>
-        public bool? IsFigureСolorable { get; set; }
-        // public bool? IsFigureDyed { get; set; } = null;
+        public StainAbility IsFigureСolorable { get; private set; }
+        public bool IsFigureColored { get; private set; } = false;
 
         /// <summary>
-        /// Площадь фигуры.
+        /// Gets the area of the shape.
         /// </summary>
-        public double Area { get; private set; }
-        /// <summary>
-        /// Периметр фигуры.
-        /// </summary>
-        public double Perimeter { get; private set; }
-
-        
-
-        /// <summary>
-        /// Получает площадь фигуры.
-        /// </summary>
-        /// <returns>Возвращает площадь фигуры.</returns>
+        /// <returns>Gets the area of the shape.</returns>
         public abstract double GetArea();
 
         /// <summary>
-        /// Получает периметр фигуры.
+        /// Gets the perimeter of the shape.
         /// </summary>
         /// <returns>Возвращает периметр фигуры.</returns>
-        public abstract double GetPerimeter(); 
+        public abstract double GetPerimeter();
 
         /// <summary>
-        /// Получает массив значений сторон фигуры, 
-        /// последовательно обходя все вершины фигуры.
+        /// Gets an array of values for the sides of the shape, sequentially traversing all the vertices of the shape.
         /// </summary>
-        /// <returns>Возвращает массив значений сторон фигуры.</returns>
+        /// <returns>Returns an array of values for the shape's sides.</returns>
         public virtual double[] GetSideSizesFromPoints()
         {
             // Соединяем первую и последнюю точку
@@ -214,8 +177,6 @@ namespace EpamWinterTraining.Figures
             return arrayOfSides;
         }
 
-        public object Clone() => Clone();
-
         public override string ToString()
         {
             string stringOfPoints = string.Join<Point>(' ', Points);
@@ -228,11 +189,10 @@ namespace EpamWinterTraining.Figures
         }
 
         /// <summary>
-        /// Сравнивает две фигуры основываяcь на их типе и цвете.
+        /// Compares two shapes based on their type and color.
         /// </summary>
-        /// <param name="obj">Фигура для сравнения.</param>
-        /// <returns>Возвращает true в случае равенства 
-        /// типов и цветов у двух фигур.</returns>
+        /// <param name="obj">Figure for comparison.</param>
+        /// <returns>Returns true if the types and colors of the two shapes are equal.</returns>
         public override bool Equals(object obj)
         {
             if (obj is Figure figure)
@@ -247,12 +207,10 @@ namespace EpamWinterTraining.Figures
         }
 
         /// <summary>
-        /// Метод задания первоначального цвета для фигуры, 
-        /// используя материал для аппликации.
+        /// Method for setting the original color for the shape using the material for the application.
         /// </summary>
-        /// <param name="material">Материал фигуры.</param>
-        /// <returns>Возвращает цвет по умолчанию
-        /// для каждого материала.</returns>
+        /// <param name="material">Shape material.</param>
+        /// <returns>Returns the default color for each material.</returns>
         private FigureColor GetStartColor(FigureMaterial material) => material switch
         {
             FigureMaterial.Film => FigureColor.Transparent,
@@ -261,26 +219,37 @@ namespace EpamWinterTraining.Figures
             _ => throw new Exception()
         };
 
-        private protected double AreaCheking(IFigure figure)
+        /// <summary>
+        /// Checks whether the area of the cut shape is larger than that of the original shape.
+        /// </summary>
+        /// <param name="figure">The original shape.</param>
+        /// <returns></returns>
+        private protected bool AreaCheking(IFigure figure)
         {
-            var result = GetArea() < figure.GetArea()
-                    ? figure.Area
-                    : throw new CuttingNotPossibleException();
+            var result = GetArea() < figure.GetArea();
             return result;
         }
 
-        private protected bool? GetFigureColorable(FigureMaterial material) => material switch
+        /// <summary>
+        /// Gets the ability to color based on the shape material.
+        /// </summary>
+        /// <param name="material">Shape material.</param>
+        /// <returns></returns>
+        private protected StainAbility GetFigureColorable(FigureMaterial material) => material switch
         {
-            FigureMaterial.Film => null,
-            _ => false
+            FigureMaterial.Film => StainAbility.CanNotDraw,
+            FigureMaterial.Plastic => StainAbility.CanDrawAlways,
+            FigureMaterial.Paper => StainAbility.CanDrawOnce,
+            _ => throw new DrawingNotPossibleException()
         };
-
+        /// <summary>
+        /// Checks, whether the shape can change color.
+        /// </summary>
+        /// <param name="color">The color to be painted.</param>
+        /// <returns></returns>
         private protected bool CanChangeColor(FigureColor color)
         {
             bool isPaintPossible = false;
-
-            // Если мы пытаемся из дефолтного начального цвета покрасить в такой же,
-            // то у нас это получится. Если фигура н окрашена,
 
             switch (color)
             {
@@ -288,20 +257,18 @@ namespace EpamWinterTraining.Figures
                 case FigureColor.PaperDefaultColor:
                 case FigureColor.PlasticDefaultColor:
                     {
-                        isPaintPossible = (_color == color);
+                        isPaintPossible = _color == color;
                         break;
                     }
                 default:
                     {
-                        if (IsFigureСolorable == false)
+                        if ((IsFigureСolorable == StainAbility.CanDrawAlways) || (IsFigureСolorable == StainAbility.CanDrawOnce))
                         {
                             isPaintPossible = true;
                         }
                         break;
                     }
-                
             }
-
             return isPaintPossible;
         }
 

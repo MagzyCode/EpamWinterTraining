@@ -3,13 +3,12 @@ using System;
 
 namespace EpamWinterTraining.Figures
 {
-    public interface IFigure : ICloneable
+    public interface IFigure
     {
         Point[] Points { get; set; }
         FigureColor ColorOfFigure { get; set; }
-        bool? IsFigureСolorable { get; set; }
-        double Area { get; }
-        double Perimeter { get; }
+        StainAbility IsFigureСolorable { get; }
+        bool IsFigureColored { get; }
         double GetPerimeter();
         double GetArea();
     }

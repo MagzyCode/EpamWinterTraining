@@ -1,18 +1,12 @@
 ﻿namespace EpamWinterTraining.Figures.FigureBasis
 {
+    /// <summary>
+    /// It is a paint for painting the figure.
+    /// </summary>
     public enum FigureColor
     {
-        /// <summary>
-        /// Прозрачный
-        /// </summary>
         Transparent,
-        /// <summary>
-        /// Первоначальный цвет бумаги.
-        /// </summary>
         PaperDefaultColor,
-        /// <summary>
-        /// Первоначальный цвет пластика.
-        /// </summary>
         PlasticDefaultColor,
         White,
         Black,

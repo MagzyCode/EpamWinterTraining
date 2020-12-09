@@ -11,8 +11,16 @@ namespace EpamWinterTraining.Xml
 {
     public static class XmlAccess
     {
+        /// <summary>
+        /// File path.
+        /// </summary>
         public const string myPath = "figuresXml.xml";
 
+        /// <summary>
+        /// Saving figures to an xml file.
+        /// </summary>
+        /// <param name="figures">Save the figures.</param>
+        /// <param name="path">File path.</param>
         public static void Save(IFigure[] figures, string path = myPath)
         {
             using var xmlWriter = XmlWriter.Create(path);
@@ -27,6 +35,12 @@ namespace EpamWinterTraining.Xml
             xmlWriter.WriteEndDocument();
         }
 
+        /// <summary>
+        /// Saving figures to an xml file.
+        /// </summary>
+        /// <param name="figures">Save the figures.</param>
+        /// <param name="material">Figure material.</param>
+        /// <param name="path">File path.</param>
         public static void Save(IFigure[] figures, FigureMaterial material, string path = myPath)
         {
             using var xmlWriter = XmlWriter.Create(path);
@@ -35,19 +49,48 @@ namespace EpamWinterTraining.Xml
 
             foreach (IFigure item in figures)
             {
-                if ((material == FigureMaterial.Film) && (item.ColorOfFigure == FigureColor.Transparent))
+                if (item != null)
                 {
-                    WriteElement(item, xmlWriter);
-                }
-                else if ((material == FigureMaterial.Paper) && (item.ColorOfFigure != FigureColor.Transparent))
-                {
-                    WriteElement(item, xmlWriter);
+                    switch (material)
+                    {
+                        case FigureMaterial.Paper:
+                            {
+                                if ((item.ColorOfFigure != FigureColor.Transparent) && (item.ColorOfFigure != FigureColor.PlasticDefaultColor) &&
+                                    (item.IsFigureСolorable != StainAbility.CanDrawAlways))
+                                {
+                                    WriteElement(item, xmlWriter);
+                                }
+                                break;
+                            }
+                        case FigureMaterial.Film:
+                            {
+                                if (item.ColorOfFigure == FigureColor.Transparent)
+                                {
+                                    WriteElement(item, xmlWriter);
+                                }
+                                break;
+                            }
+                        case FigureMaterial.Plastic:
+                            {
+                                if (item.IsFigureСolorable == StainAbility.CanDrawAlways)
+                                {
+                                    WriteElement(item, xmlWriter);
+                                }
+                                break;
+                            }
+
+                    }
                 }
             }
 
             xmlWriter.WriteEndDocument();
         }
 
+        /// <summary>
+        /// Unloads shapes from an xml file to an array of shapes.
+        /// </summary>
+        /// <param name="path">File path.</param>
+        /// <returns>Figures array.</returns>
         public static IFigure[] LoadFile(string path = myPath)
         {
             using var stream = new FileStream(path, FileMode.OpenOrCreate);
@@ -61,10 +104,15 @@ namespace EpamWinterTraining.Xml
                 {
                     if (xmlReader.HasAttributes)
                     {
-                        var figureType = xmlReader.GetAttribute("type");
-                        var figurePoints = xmlReader.GetAttribute("points");
-                        var figureColor = xmlReader.GetAttribute("color");
-                        IFigure figure = XmlParser.FigureParse(figureType, figurePoints, figureColor);
+                        var properties = new string[]
+                        {
+                            xmlReader.GetAttribute("type"),
+                            xmlReader.GetAttribute("points"),
+                            xmlReader.GetAttribute("color"),
+                            xmlReader.GetAttribute("figureColorable"),
+                            xmlReader.GetAttribute("figureColored")
+                        };
+                        IFigure figure = XmlParser.FigureParse(properties);
                         figures[counter++] = figure;
                     }
                 }
@@ -72,6 +120,11 @@ namespace EpamWinterTraining.Xml
             return figures;
         }
 
+        /// <summary>
+        /// Converts the shape to xml format.
+        /// </summary>
+        /// <param name="figure">Convertable figure.</param>
+        /// <param name="document"></param>
         private static void WriteElement(IFigure figure, XmlWriter xmlWriter)
         {
             xmlWriter.WriteStartElement("figure");
@@ -81,6 +134,10 @@ namespace EpamWinterTraining.Xml
             xmlWriter.WriteAttributeString("points", stringOfPoints);
             var color = figure.ColorOfFigure.ToString();
             xmlWriter.WriteAttributeString("color", color);
+            var colorable = figure.IsFigureСolorable.ToString();
+            xmlWriter.WriteAttributeString("figureColorable", colorable);
+            var isColored = figure.IsFigureColored ? "true" : "false";
+            xmlWriter.WriteAttributeString("figureColored", isColored);
             xmlWriter.WriteEndElement();
         }
     }
