@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30611.23
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EpamWinterTraining", "EpamWinterTraining\EpamWinterTraining.csproj", "{3568FD4E-931D-4A98-8A6F-573E19EEA5A4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EpamWinterTraining", "EpamWinterTraining\EpamWinterTraining.csproj", "{3568FD4E-931D-4A98-8A6F-573E19EEA5A4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestFifthTask", "TestFifthTask\TestFifthTask.csproj", "{A1A460A4-81BC-4285-BA3F-5C080E2BF28F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{3568FD4E-931D-4A98-8A6F-573E19EEA5A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3568FD4E-931D-4A98-8A6F-573E19EEA5A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3568FD4E-931D-4A98-8A6F-573E19EEA5A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A1A460A4-81BC-4285-BA3F-5C080E2BF28F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1A460A4-81BC-4285-BA3F-5C080E2BF28F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1A460A4-81BC-4285-BA3F-5C080E2BF28F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1A460A4-81BC-4285-BA3F-5C080E2BF28F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
