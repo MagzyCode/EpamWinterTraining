@@ -20,41 +20,17 @@ namespace Epam_Task7
 	using System.Linq.Expressions;
 	using System.ComponentModel;
 	using System;
-
-	[global::System.Data.Linq.Mapping.DatabaseAttribute(Name = "Students")]
+	
+	
 	public partial class StudentsDataContext : System.Data.Linq.DataContext
 	{
 		
 		private static System.Data.Linq.Mapping.MappingSource mappingSource = new AttributeMappingSource();
 		
     #region Определения метода расширяемости
-		partial void OnCreated();
-		partial void InsertEducationalSubjects(EducationalSubjects instance);
-		partial void UpdateEducationalSubjects(EducationalSubjects instance);
-		partial void DeleteEducationalSubjects(EducationalSubjects instance);
-		partial void InsertExaminers(Examiners instance);
-		partial void UpdateExaminers(Examiners instance);
-		partial void DeleteExaminers(Examiners instance);
-		partial void InsertGroups(Groups instance);
-		partial void UpdateGroups(Groups instance);
-		partial void DeleteGroups(Groups instance);
-		partial void InsertSessionEducationalSubjects(SessionEducationalSubjects instance);
-		partial void UpdateSessionEducationalSubjects(SessionEducationalSubjects instance);
-		partial void DeleteSessionEducationalSubjects(SessionEducationalSubjects instance);
-		partial void InsertSessions(Sessions instance);
-		partial void UpdateSessions(Sessions instance);
-		partial void DeleteSessions(Sessions instance);
-		partial void InsertSpecialtys(Specialtys instance);
-		partial void UpdateSpecialtys(Specialtys instance);
-		partial void DeleteSpecialtys(Specialtys instance);
-		partial void InsertStudentResults(StudentResults instance);
-		partial void UpdateStudentResults(StudentResults instance);
-		partial void DeleteStudentResults(StudentResults instance);
-		partial void InsertStudents(Students instance);
-		partial void UpdateStudents(Students instance);
-		partial void DeleteStudents(Students instance);
-
+    partial void OnCreated();
 		#endregion
+
 		public StudentsDataContext() :
 				base(global::Epam_Task7.Properties.Settings.Default.StudentsConnectionString, mappingSource)
 		{

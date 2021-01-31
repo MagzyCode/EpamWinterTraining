@@ -9,9 +9,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Epam_Task7</RootNamespace>
     <AssemblyName>Epam_Task7</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -31,10 +32,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Interop.VBIDE, Version=5.3.0.0, Culture=neutral">
-      <HintPath>..\packages\HiNetCloud.Interop.VBIDE.20.7.2.10\lib\net46\Interop.VBIDE.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </Reference>
     <Reference Include="Microsoft.Office.Interop.Excel, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Office.Interop.Excel.15.0.4795.1000\lib\net20\Microsoft.Office.Interop.Excel.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
@@ -59,6 +56,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Reports\GenerationReport.cs" />
     <Compile Include="Students.designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -72,9 +70,9 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="Reports\Report1.xlsx" />
-    <None Include="Reports\Report2.xlsx" />
-    <None Include="Reports\Report3.xlsx" />
+    <None Include="Resources\Report1.xlsx" />
+    <None Include="Resources\Report2.xlsx" />
+    <None Include="Resources\Report3.xlsx" />
     <None Include="Students.dbml">
       <Generator>MSLinqToSQLGenerator</Generator>
       <LastGenOutput>Students.designer.cs</LastGenOutput>
